@@ -1,0 +1,16 @@
+.table th, tr, td {
+    text-align: center;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0.5em;
+}
+
+.table tbody tr > td.success {
+    background-color: #66FF00 !important;
+}
+
+.table tbody tr > td.danger {
+    background-color: red !important;
+}

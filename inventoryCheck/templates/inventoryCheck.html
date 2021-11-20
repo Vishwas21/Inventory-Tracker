@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+        <title>Inventory Check</title>
+    {% endblock %}
+
+    {% block imports %}
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'css/home.css'%}" type="text/css">
+    {% endblock %}
+
+    {% block body %}
+        <div class = "col-md-12">
+            <div class="container jumbotron" id="homeDiv">
+                <h2 class="container ">Inventory Check</h2>
+            </div>
+
+            <div class="container table-responsive">
+                <table class="table table-hover" id="inventorytrackertable">
+                    <caption>Inventory Details</caption>
+                    <thead class="thead-light">
+                        <th scope="col">Item 1</th>
+                        <th scope="col">Item 2</th>
+                        <th scope="col">Item 3</th>
+                        <th scope="col">Item 4</th>
+                        <th scope="col">Item 5</th>
+                        <th scope="col">Item 6</th>
+                        <th scope="col">Item 7</th>
+                        <th scope="col">Item 8</th>
+                    </thead>
+                    <!-- <tbody>
+                        <td><button type="button" class="btn btn-success">50%</button></td>
+                        <td><button type="button" class="btn btn-danger">50%</button></td>
+                        <td><button type="button" class="btn btn-warning">50%</button></td>
+                        <td><button type="button" class="btn btn-success">50%</button></td>
+                        <td><button type="button" class="btn btn-danger">50%</button></td>
+                        <td><button type="button" class="btn btn-warning">50%</button></td>
+                        <td><button type="button" class="btn btn-success">50%</button></td>
+                        <td><button type="button" class="btn btn-danger">50%</button></td>
+                    </tbody> -->
+                </table>
+            </div>
+        </div>
+        {% csrf_token %}
+    {% endblock body %}
+
+    {% block script %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+        $.ajax({
+            url: '/inventory/getdata/',
+            type: 'POST',
+            success: function (data) {
+                $("#inventorytrackertable>tbody").remove();
+                var tbody = "<tbody><tr>";
+                for (let index = 0; index < data.values.length; index++) {
+                const val = data.values[index];
+                if (val <= 30) {
+                    tbody += "<td><button type=\"button\" class=\"btn btn-danger\">" + val + "%</button></td>";
+                }
+                else if (val <= 50) {
+                    tbody += "<td><button type=\"button\" class=\"btn btn-warning\">" + val + "%</button></td>";
+                }
+                else {
+                    tbody += "<td><button type=\"button\" class=\"btn btn-success\">" + val + "%</button></td>";
+                }
+                }
+                tbody += "</tr></tbody>"
+                $("#inventorytrackertable").append(tbody);
+            }
+        });
+    });
+
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+        }
+    });
+    </script>
+    {% endblock %}
+        

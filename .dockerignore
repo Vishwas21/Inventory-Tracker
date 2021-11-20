@@ -1,0 +1,4 @@
+# Files to be ignored for the docker image
+.history
+.vscode
+.git

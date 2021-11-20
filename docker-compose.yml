@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+    inventory.tracker:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            labels:
+                com.example.description: "Simple inventory checker UI"
+        container_name: inventory-tracker-container
+        ports:
+            - "5675:5982"
+        networks:
+            default:
+                aliases:
+                    - inventory

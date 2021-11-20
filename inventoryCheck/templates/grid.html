@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+        <title>Inventory Grid</title>
+    {% endblock %}
+
+    {% block imports %}
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'css/grid.css'%}" type="text/css">
+    {% endblock %}
+
+    {% block body %}
+        <div class="col-md-12">
+            <div class="container jumbotron" id="gridHomeDivId">
+                <h2 class="container">Inventory Grid</h2>
+            </div>
+
+            <div class="container table-responsive">
+                <table class="table table-borderless" id="inventoryGridTableId"></table>
+            </div>
+        </div>
+        {% csrf_token %}
+    {% endblock %}
+
+    {% block script %}
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                $.ajax({
+                    url: '/inventory/getsensordata/',
+                    type: 'POST',
+                    success: function (data) {
+                        // $('inventoryGridTableId>thead').remove();
+                        $('inventoryGridTableId>tbody').remove();
+                        var tbody = "<tbody><tr><th>#</th>";
+                        for (let i = 0; i < data.gridValues[0].length; i++) {
+                            tbody += "<th span = 'col'>" + (i+1) + "</th>";
+                        }
+                        tbody += "</tr>"
+                        for (let i = 0; i < data.gridValues.length; i++) {
+                            const rowData = data.gridValues[i];
+                            tbody += "<tr><th span = 'row'>" + (i+1) + "</th>"
+                            for (let j = 0; j < rowData.length; j++) {
+                                const value = rowData[j];
+                                if (value == 0) {
+                                    tbody += "<td class = 'danger'></td>"
+                                }
+                                else {
+                                    tbody += "<td class = 'success'></td>"
+                                }
+                            }
+                            tbody += "</tr>"
+                        }
+                        tbody += "</tbody>"
+                        $("#inventoryGridTableId").append(tbody);
+                    }
+                });
+            });
+
+            var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+            function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+            });
+        </script>
+    {% endblock %}
